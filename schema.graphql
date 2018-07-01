@@ -1,0 +1,27 @@
+type Entity {
+    id: Int!
+    name: String!
+    desc: String
+    picture: String
+    category_id: Int!
+    geo: Point!
+    pref_id: Int!
+    city_id: Int!
+    distance: String
+}
+
+type Point {
+    lat: String!
+    lng: String!
+}
+
+input PointInput {
+    lat: String!
+    lng: String!
+}
+
+type Query {
+    nearEntitiesInPoint(point: PointInput! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
+    nearEntities(entityId: Int! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
+}
+
