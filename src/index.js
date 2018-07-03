@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 
 import Koa from 'koa';
+import koaCors from '@koa/cors';
 import koaBody from 'koa-bodyparser';
 import Router from 'koa-router';
 import Serve from 'koa-static';
@@ -15,6 +16,7 @@ db.sequelize.sync().then(() => {
   const graphQL = new GraphQL(schemaText, '/api', db, console.log);
 
   const app = new Koa();
+  app.use(koaCors());
   app.use(koaBody());
 
   const router = new Router();
