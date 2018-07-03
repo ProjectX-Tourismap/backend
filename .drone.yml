@@ -37,8 +37,7 @@ pipeline:
     username: drone
     password: drone
     source:
-    - dist/*
-    - package.json
+    - *
     target: /Server/School/Drone/backend
     when:
       status: [ success ]
