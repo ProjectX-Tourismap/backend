@@ -20,7 +20,7 @@ pipeline:
     - /tmp/cache:/cache
   build-notify:
     image: plugins/slack
-    webhook: https://hooks.slack.com/services/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
+    webhook: https://hooks.slack.com/services/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
     username: Drone
     when:
       status: [ success, failure ]
@@ -43,7 +43,7 @@ pipeline:
       status: [ success ]
   deploy-notify:
     image: plugins/slack
-    webhook: https://hooks.slack.com/services/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
+    webhook: https://hooks.slack.com/services/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
     username: Drone
     when:
       status: [ success, failure ]
