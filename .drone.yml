@@ -1,0 +1,57 @@
+pipeline:
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount:
+    - ./node_modules
+    volumes:
+    - /tmp/cache:/cache
+  build:
+    image: node:9-alpine
+    commands:
+    - npm install
+    - npm run build
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount:
+    - ./node_modules
+    volumes:
+    - /tmp/cache:/cache
+  build-notify:
+    image: plugins/slack
+    webhook: https://hooks.slack.com/services/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
+    username: Drone
+    when:
+      status: [ success, failure ]
+    template: >
+      {{#success build.status}}
+        build {{build.number}} succeeded. Good job. (CommitID: {{build.commit}})
+      {{else}}
+        build {{build.number}} failed. Fix me please. (CommitID: {{build.commit}})
+      {{/success}}
+      URL: https://drone.syuchan.work/syuchan1005/DroneTestRepository/{{build.number}}
+  scp:
+    image: appleboy/drone-scp
+    host: 192.168.1.251
+    username: drone
+    password: drone
+    source:
+    - dist/*
+    - package.json
+    target: /Server/School/Drone/backend
+    when:
+      status: [ success ]
+  deploy-notify:
+    image: plugins/slack
+    webhook: https://hooks.slack.com/services/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
+    username: Drone
+    when:
+      status: [ success, failure ]
+    template: >
+      {{#success build.status}}
+        Deploy Complete!
+      {{else}}
+        deploy failed.
+      {{/success}}
+
