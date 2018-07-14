@@ -88,7 +88,7 @@ export default class GraphQL {
       }) => this.db.sequelize.models.categories.findAll({
         limit,
         offset,
-      }).then(rows => rows.map(v => v.dataValues));
+      }).then(rows => rows.map(v => v.dataValues)),
     };
   }
 }
