@@ -83,6 +83,25 @@ export default class GraphQL {
           return data;
         });
       },
+      searchEntities: async (obj, {
+        name, limit, offset,
+      }) => {
+        const rows = await this.db.sequelize.models.entities.findALL({
+          where: {
+            name,
+          },
+          limit,
+          offset,
+        });
+        return rows.map((v) => {
+          const data = v;
+          data.geo = {
+            lat: data.geo.coordinates[0],
+            lng: data.geo.coordinates[1],
+          };
+          return data;
+        });
+      },
       categories: async (obj, {
         limit, offset,
       }) => this.db.sequelize.models.categories.findAll({

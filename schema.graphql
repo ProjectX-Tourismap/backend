@@ -29,4 +29,5 @@ type Query {
     nearEntitiesInPoint(point: PointInput! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
     nearEntities(entityId: Int! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
     categories(limit: Int = 15, offset: Int = 0): [Category]!
+    searchEntities(name: String! limit: Int = 15 offset: Int = 0): [Entity]!
 }
