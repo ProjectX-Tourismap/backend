@@ -4,3 +4,4 @@ node_modules
 *.iml
 *lock.json
 .env
+.DS_Store

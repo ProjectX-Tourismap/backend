@@ -68,11 +68,11 @@ export default class GraphQL {
       }) => {
         // TODO: raw query to sequelize findAll
         const rows = await this.db.sequelize
-          .query(`SELECT ST_Length(ST_GeomFromText(CONCAT('LINESTRING(', ST_X(e1.geo), ' ', ST_Y(e1.geo), ',', ST_X(e2.geo), ' ', ST_Y(e2.geo), ')'))) AS distance, 
+          .query(`SELECT ST_Length(ST_GeomFromText(CONCAT('LINESTRING(', ST_X(e1.geo), ' ', ST_Y(e1.geo), ',', ST_X(e2.geo), ' ', ST_Y(e2.geo), ')'))) AS distance,
           e2.id, e2.name, e2.\`desc\`, e2.picture, e2.category_id, e2.geo, e2.geo_text, e2.pref_id, e2.city_id
           FROM entities AS e1 INNER JOIN entities AS e2
           WHERE e1.id = ${entityId} AND e1.id != e2.id
-          GROUP BY e2.id HAVING distance <= ${0.0089831601679492 * distance} 
+          GROUP BY e2.id HAVING distance <= ${0.0089831601679492 * distance}
           ORDER BY distance LIMIT ${offset}, ${limit};`, { type: Sequelize.QueryTypes.SELECT });
         return rows.map((v) => {
           const data = v;
@@ -102,6 +102,12 @@ export default class GraphQL {
           return data;
         });
       },
+      categories: async (obj, {
+        limit, offset,
+      }) => this.db.sequelize.models.categories.findAll({
+        limit,
+        offset,
+      }).then(rows => rows.map(v => v.dataValues)),
     };
   }
 }
