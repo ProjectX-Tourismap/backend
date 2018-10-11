@@ -8,7 +8,10 @@ class ManholeMapAPI {
 
   static get http() {
     if (!this.$http) {
-      this.$http = axios.create({ baseURL: ManholeMapAPI.baseURL });
+      this.$http = axios.create({
+        baseURL: ManholeMapAPI.baseURL,
+        params: { format: 'json' },
+      });
     }
     return this.$http;
   }
@@ -59,7 +62,6 @@ class ManholeMapAPI {
     return this.http({
       url: '/searchbounds',
       params: {
-        format: 'json',
         north: point.lat - distance * this.latKM,
         south: point.lat + distance * this.latKM,
         east: point.lng - distance * this.lngKM,
@@ -67,7 +69,6 @@ class ManholeMapAPI {
         start: offset,
         limit,
       },
-      responseType: 'text',
     }).then(res => this.res2json(res).map(v => ManholeMapAPI.manholeMap2Graphql(v)));
   }
 
