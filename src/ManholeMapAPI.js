@@ -32,7 +32,7 @@ class ManholeMapAPI {
 
   static manholeMap2Graphql(v) {
     const text = v.text.replace(/&lt;br\/&gt;/g, '\n').replace(/<("[^"]*"|'[^']*'|[^'">])*>/g, '');
-    const match = text.match(/[。.\s/／]/);
+    const match = text.match(/[、。,.\s/／]/);
     const textSep = match ? match.index : v.text.length;
     return {
       categoryId: Database.categories.indexOf('Manhole'),
