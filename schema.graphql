@@ -9,8 +9,8 @@ type Entity {
 }
 
 type Point {
-    lat: String!
-    lng: String!
+    lat: Float!
+    lng: Float!
 }
 
 type Category {
@@ -19,8 +19,8 @@ type Category {
 }
 
 input PointInput {
-    lat: String!
-    lng: String!
+    lat: Float!
+    lng: Float!
 }
 
 type Query {
