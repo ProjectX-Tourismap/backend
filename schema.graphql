@@ -1,18 +1,16 @@
 type Entity {
-    id: Int!
+    categoryId: Int!
+    id: String!
     name: String!
     desc: String
     picture: String
-    category_id: Int!
     geo: Point!
-    pref_id: Int!
-    city_id: Int!
     distance: String
 }
 
 type Point {
-    lat: String!
-    lng: String!
+    lat: Float!
+    lng: Float!
 }
 
 type Category {
@@ -21,13 +19,15 @@ type Category {
 }
 
 input PointInput {
-    lat: String!
-    lng: String!
+    lat: Float!
+    lng: Float!
 }
 
 type Query {
-    nearEntitiesInPoint(point: PointInput! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
-    nearEntities(entityId: Int! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
     categories(limit: Int = 15, offset: Int = 0): [Category]!
+
+    entity(categoryId: Int! id: String!):Entity
+    nearEntitiesInPoint(point: PointInput! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
+    nearEntities(category_id: Int! id: String! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
     searchEntities(name: String! limit: Int = 15 offset: Int = 0): [Entity]!
 }

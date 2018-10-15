@@ -1,11 +1,11 @@
 import { graphiqlKoa, graphqlKoa } from 'apollo-server-koa';
 import { makeExecutableSchema } from 'graphql-tools';
+import ManholeMapAPI from './ManholeMapAPI';
+import Database from './Database';
 
 export default class GraphQL {
-  constructor(schemaText, endpointURL, db, logging) {
+  constructor(schemaText, endpointURL) {
     this.schemaText = schemaText;
-    this.logging = logging;
-    this.db = db;
     this.graphiql = graphiqlKoa({ endpointURL });
   }
 
@@ -15,7 +15,7 @@ export default class GraphQL {
         schema: makeExecutableSchema({
           typeDefs: this.schemaText,
           resolvers: {
-            Query: this.Query,
+            Query: GraphQL.Query,
           },
         }),
         context,
@@ -23,91 +23,36 @@ export default class GraphQL {
     };
   }
 
-  get Query() {
-    const { Sequelize } = this.db;
+  static get Query() {
+    /* eslint-disable no-param-reassign */
     return {
+      entity: async (obj, { categoryId, id }) => {
+        if (categoryId === Database.categories.indexOf('Manhole')) return ManholeMapAPI.entity(id);
+        return null;
+      },
       nearEntitiesInPoint: async (obj, {
         point, distance, limit, offset,
       }) => {
-        const rows = await this.db.sequelize.models.entities.findAll({
-          attributes: [
-            'id',
-            'name',
-            'desc',
-            'picture',
-            'category_id',
-            'geo',
-            'geo_text',
-            'pref_id',
-            'city_id',
-            [Sequelize.fn('ST_Length', Sequelize.fn('ST_GeomFromText', Sequelize.fn('CONCAT',
-              `LINESTRING(${point.lat} ${point.lng},`,
-              Sequelize.fn('ST_X', Sequelize.col('geo')), ' ',
-              Sequelize.fn('ST_Y', Sequelize.col('geo')), ')'))), 'distance'],
-          ],
-          order: [Sequelize.col('distance')],
-          limit,
-          offset,
-          having: {
-            distance: {
-              [Sequelize.Op.lte]: 0.0089831601679492 * distance,
-            },
-          },
-        });
-        return rows.map((v) => {
-          const data = v.dataValues;
-          data.geo = {
-            lat: data.geo.coordinates[0],
-            lng: data.geo.coordinates[1],
-          };
-          return data;
-        });
-      },
-      nearEntities: async (obj, {
-        entityId, distance, limit, offset,
-      }) => {
-        // TODO: raw query to sequelize findAll
-        const rows = await this.db.sequelize
-          .query(`SELECT ST_Length(ST_GeomFromText(CONCAT('LINESTRING(', ST_X(e1.geo), ' ', ST_Y(e1.geo), ',', ST_X(e2.geo), ' ', ST_Y(e2.geo), ')'))) AS distance,
-          e2.id, e2.name, e2.\`desc\`, e2.picture, e2.category_id, e2.geo, e2.geo_text, e2.pref_id, e2.city_id
-          FROM entities AS e1 INNER JOIN entities AS e2
-          WHERE e1.id = ${entityId} AND e1.id != e2.id
-          GROUP BY e2.id HAVING distance <= ${0.0089831601679492 * distance}
-          ORDER BY distance LIMIT ${offset}, ${limit};`, { type: Sequelize.QueryTypes.SELECT });
-        return rows.map((v) => {
-          const data = v;
-          data.geo = {
-            lat: data.geo.coordinates[0],
-            lng: data.geo.coordinates[1],
-          };
-          return data;
-        });
+        const manhole = await ManholeMapAPI.nearEntitiesInPoint(point, distance, limit, offset);
+        return manhole;
       },
       searchEntities: async (obj, {
         name, limit, offset,
       }) => {
-        const rows = await this.db.sequelize.models.entities.findALL({
-          where: {
-            name,
-          },
-          limit,
-          offset,
-        });
-        return rows.map((v) => {
-          const data = v;
-          data.geo = {
-            lat: data.geo.coordinates[0],
-            lng: data.geo.coordinates[1],
-          };
-          return data;
+        const manhole = await ManholeMapAPI.searchEntities(name, limit, offset);
+        return manhole;
+      },
+      nearEntities: async (obj, {
+        categoryId, id, distance, limit, offset,
+      }) => {
+        const entity = await GraphQL.Query.entity({}, { categoryId, id });
+        if (!entity) return [];
+        return GraphQL.Query.nearEntitiesInPoint({}, {
+          point: entity.geo, distance, limit, offset,
         });
       },
-      categories: async (obj, {
-        limit, offset,
-      }) => this.db.sequelize.models.categories.findAll({
-        limit,
-        offset,
-      }).then(rows => rows.map(v => v.dataValues)),
+      categories: (obj, { limit, offset }) => Database.categories
+        .map((name, id) => ({ id, name })).slice(offset, offset + limit),
     };
   }
 }
