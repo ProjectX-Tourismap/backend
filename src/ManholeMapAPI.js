@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Database from './Database';
 
 class ManholeMapAPI {
   static get baseURL() {
@@ -35,7 +34,7 @@ class ManholeMapAPI {
     const match = text.match(/[、。,.\s/／]/);
     const textSep = match ? match.index : v.text.length;
     return {
-      categoryId: Database.categories.indexOf('Manhole'),
+      categoryId: '0',
       id: v.id,
       name: text.substring(0, textSep) || 'Manhole',
       desc: text.substring(textSep + 1),

@@ -1,5 +1,5 @@
 type Entity {
-    categoryId: Int!
+    categoryId: String!
     id: String!
     name: String!
     desc: String
@@ -26,7 +26,7 @@ input PointInput {
 type Query {
     categories(limit: Int = 15, offset: Int = 0): [Category]!
 
-    entity(categoryId: Int! id: String!):Entity
+    entity(categoryId: String! id: String!):Entity
     nearEntitiesInPoint(point: PointInput! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
     nearEntities(category_id: Int! id: String! distance: Float = 1 limit: Int = 15 offset: Int = 0): [Entity]!
     searchEntities(name: String! limit: Int = 15 offset: Int = 0): [Entity]!

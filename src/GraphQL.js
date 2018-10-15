@@ -1,7 +1,7 @@
 import { graphiqlKoa, graphqlKoa } from 'apollo-server-koa';
 import { makeExecutableSchema } from 'graphql-tools';
 import ManholeMapAPI from './ManholeMapAPI';
-import Database from './Database';
+import YahooLocalSearchAPI from './YahooLocalSearchAPI';
 
 export default class GraphQL {
   constructor(schemaText, endpointURL) {
@@ -23,24 +23,27 @@ export default class GraphQL {
     };
   }
 
+  // TODO: limit * 2ある. 距離順に並べて削ること.
   static get Query() {
-    /* eslint-disable no-param-reassign */
     return {
       entity: async (obj, { categoryId, id }) => {
-        if (categoryId === Database.categories.indexOf('Manhole')) return ManholeMapAPI.entity(id);
-        return null;
+        if (Number(categoryId) === 0) return ManholeMapAPI.entity(id);
+        return YahooLocalSearchAPI.entity(categoryId, id);
       },
       nearEntitiesInPoint: async (obj, {
         point, distance, limit, offset,
       }) => {
         const manhole = await ManholeMapAPI.nearEntitiesInPoint(point, distance, limit, offset);
-        return manhole;
+        const yahooLocal = await YahooLocalSearchAPI
+          .nearEntitiesInPoint(point, distance, limit, offset);
+        return [...manhole, ...yahooLocal];
       },
       searchEntities: async (obj, {
         name, limit, offset,
       }) => {
         const manhole = await ManholeMapAPI.searchEntities(name, limit, offset);
-        return manhole;
+        const yahooLocal = await YahooLocalSearchAPI.searchEntities(name, limit, offset);
+        return [...manhole, ...yahooLocal];
       },
       nearEntities: async (obj, {
         categoryId, id, distance, limit, offset,
@@ -51,8 +54,10 @@ export default class GraphQL {
           point: entity.geo, distance, limit, offset,
         });
       },
-      categories: (obj, { limit, offset }) => Database.categories
-        .map((name, id) => ({ id, name })).slice(offset, offset + limit),
+      categories: (obj, { limit, offset }) => ['Manhole'].map((name, id) => ({
+        id,
+        name,
+      })).slice(offset, offset + limit),
     };
   }
 }

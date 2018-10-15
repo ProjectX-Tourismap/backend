@@ -2,6 +2,7 @@
 import path from 'path';
 import fs from 'fs';
 
+import dotenv from 'dotenv';
 import Koa from 'koa';
 import koaCors from '@koa/cors';
 import koaBody from 'koa-bodyparser';
@@ -9,6 +10,8 @@ import Router from 'koa-router';
 import Serve from 'koa-static';
 
 import GraphQL from './GraphQL';
+
+dotenv.config();
 
 const schemaText = fs.readFileSync(path.join(__dirname, '..', 'schema.graphql'), 'utf-8');
 const graphQL = new GraphQL(schemaText, '/api');
