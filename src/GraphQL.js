@@ -23,7 +23,27 @@ export default class GraphQL {
     };
   }
 
-  // TODO: limit * 2ある. 距離順に並べて削ること.
+  static hubenyDistance(lat1, lng1, lat2, lng2) {
+    const radLat1 = lat1 * Math.PI / 180;
+    const radLat2 = lat2 * Math.PI / 180;
+    const latAvg = (radLat1 + radLat2) / 2.0;
+    const sinLat = Math.sin(latAvg);
+    const W2 = 1.0 - 0.00669438002301188 * (sinLat * sinLat);
+    const t1 = 6335439.32708317 / (Math.sqrt(W2) * W2) * (radLat1 - radLat2);
+    const t2 = 6378137.0 / Math.sqrt(W2) * Math.cos(latAvg)
+      * ((lng1 * Math.PI / 180) - (lng2 * Math.PI / 180));
+    return Math.sqrt((t1 * t1) + (t2 * t2));
+  }
+
+  static filterNearest(centerPoint, limit, ...items) {
+    const list = items.map(v => ({
+      ...v,
+      distance: this.hubenyDistance(centerPoint.lat, centerPoint.lng, v.geo.lat, v.geo.lng),
+    }));
+    list.sort((a, b) => a.distance - b.distance);
+    return list.slice(0, limit);
+  }
+
   static get Query() {
     return {
       entity: async (obj, { categoryId, id }) => {
@@ -36,14 +56,15 @@ export default class GraphQL {
         const manhole = await ManholeMapAPI.nearEntitiesInPoint(point, distance, limit, offset);
         const yahooLocal = await YahooLocalSearchAPI
           .nearEntitiesInPoint(point, distance, limit, offset);
-        return [...manhole, ...yahooLocal];
+        return this.filterNearest(point, limit, ...manhole, ...yahooLocal);
       },
       searchEntities: async (obj, {
         name, limit, offset,
       }) => {
-        const manhole = await ManholeMapAPI.searchEntities(name, limit, offset);
-        const yahooLocal = await YahooLocalSearchAPI.searchEntities(name, limit, offset);
-        return [...manhole, ...yahooLocal];
+        // const manhole = await ManholeMapAPI.searchEntities(name, limit, offset);
+        const yahooLocal = await YahooLocalSearchAPI
+          .searchEntities(name, limit, offset);
+        return [/* ...manhole, */...yahooLocal];
       },
       nearEntities: async (obj, {
         categoryId, id, distance, limit, offset,
