@@ -30,7 +30,7 @@ pipeline:
       {{else}}
         build {{build.number}} failed. Fix me please. (CommitID: {{build.commit}})
       {{/success}}
-      URL: https://drone.syuchan.work/syuchan1005/DroneTestRepository/{{build.number}}
+      URL: https://drone.syuchan.work/{{repo.owner}}/{{repo.name}}/{{build.number}}
   scp:
     image: appleboy/drone-scp
     host: 192.168.1.251
