@@ -41,7 +41,7 @@ class YahooLocalSearchAPI {
         id,
       },
     }).then((res) => {
-      if (res.data.Feature.length !== 1) return null;
+      if ((res.data.Feature || []).length !== 1) return null;
       return this.api2GraphQL(res.data.Feature[0]);
     });
   }
@@ -55,7 +55,7 @@ class YahooLocalSearchAPI {
         start: offset,
         result: limit,
       },
-    }).then(res => res.data.Feature.map(this.api2GraphQL));
+    }).then(res => (res.data.Feature || []).map(this.api2GraphQL));
   }
 
   static searchEntities(name, limit, offset) {
@@ -65,7 +65,7 @@ class YahooLocalSearchAPI {
         start: offset,
         result: limit,
       },
-    }).then(res => res.data.Feature.map(this.api2GraphQL));
+    }).then(res => (res.data.Feature || []).map(this.api2GraphQL));
   }
 }
 
