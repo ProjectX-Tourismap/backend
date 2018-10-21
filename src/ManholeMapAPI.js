@@ -25,7 +25,7 @@ class ManholeMapAPI {
 
   static res2json(res) {
     return typeof res.data === 'string'
-      ? JSON.parse(`{"data":${res.data.replace(/\r?\n/g, ' ').replace(/[\b]/g, '')}}`).data
+      ? JSON.parse(`{"data":${res.data.replace(/(\r?\n|[\t])/g, ' ').replace(/[\b]/g, '')}}`).data
       : res.data;
   }
 
