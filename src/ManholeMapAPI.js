@@ -34,6 +34,7 @@ class ManholeMapAPI {
     const match = text.match(/[、。,.\s/／]/);
     const textSep = match ? match.index : v.text.length;
     return {
+      genreCode: '0000000',
       categoryId: '0',
       id: v.id,
       name: text.substring(0, textSep) || 'Manhole',
