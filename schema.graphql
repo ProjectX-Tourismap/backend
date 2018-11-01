@@ -1,4 +1,5 @@
 type Entity {
+    genreCode: String! # 7chars
     categoryId: String!
     id: String!
     name: String!
