@@ -15,14 +15,11 @@ const Place = sequelize.define("place", {
   },
 });
 
-const Detail = sequelize.define("detail", {
-  id: {
-    type: DataTypes.STRING,
-    unique: true,
-    allowNull: false,
-  },
+const PlaceMap = sequelize.define("placeMap", {
   url: {
     type: DataTypes.STRING,
   },
 });
+
+Place.hasOne(PlaceMap);
 
