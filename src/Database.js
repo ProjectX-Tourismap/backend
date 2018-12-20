@@ -6,18 +6,18 @@ const sequelize = new Sequelize('database', '', '', {
 
 const Place = sequelize.define('place', {
   yahooId: {
-    type: DataTypes.STRING,
+    type: Sequelize.DataTypes.STRING,
     allowNull: false,
   },
   yahooCategoryId: {
-    type: DataTypes.STRING,
+    type: Sequelize.DataTypes.STRING,
     allowNull: false,
   },
 });
 
 const PlaceMap = sequelize.define('placeMap', {
   url: {
-    type: DataTypes.STRING,
+    type: Sequelize.DataTypes.STRING,
   },
 });
 
