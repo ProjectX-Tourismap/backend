@@ -22,4 +22,3 @@ const PlaceMap = sequelize.define('placeMap', {
 });
 
 Place.hasOne(PlaceMap);
-
