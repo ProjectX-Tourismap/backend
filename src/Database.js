@@ -4,7 +4,7 @@ const sequelize = new Sequelize('database', '', '', {
   storage: './Tourismap.db',
 });
 
-const Place = sequelize.define("place", {
+const Place = sequelize.define('place', {
   yahooId: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -15,7 +15,7 @@ const Place = sequelize.define("place", {
   },
 });
 
-const PlaceMap = sequelize.define("placeMap", {
+const PlaceMap = sequelize.define('placeMap', {
   url: {
     type: DataTypes.STRING,
   },
