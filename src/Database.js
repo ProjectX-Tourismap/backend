@@ -1,4 +1,5 @@
 /* created by Shogo Yoshida 2018.12.20 */
+import sequelize from 'sequelize';
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('database', '', '', {
   dialect: 'sqlite',
