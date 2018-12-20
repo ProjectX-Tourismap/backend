@@ -1,9 +1,9 @@
 /* created by Shogo Yoshida 2018.12.20 */
-import sequelize from 'sequelize';
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
+
 const sequelize = new Sequelize('database', '', '', {
   dialect: 'sqlite',
-  storage: './Tourismap.db',
+  storage: './TourismapData.db',
 });
 
 const Place = sequelize.define('place', {
