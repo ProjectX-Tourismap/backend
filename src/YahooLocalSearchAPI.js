@@ -11,7 +11,7 @@ class YahooLocalSearchAPI {
           device: 'mobile',
           sort: 'dist',
           output: 'json',
-          image: true,
+          // image: true,
         },
       });
     }
