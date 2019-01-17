@@ -22,7 +22,7 @@ class YahooLocalSearchAPI {
     const geo = feature.Geometry.Coordinates;
     const sep = geo.indexOf(',');
     return {
-      genreCode: feature.Property.Genre[0].Code,
+      genreCode: (feature.Property.Genre[0] || { Code: '0000000' }).Code,
       categoryId: feature.Property.CassetteId,
       id: feature.Id,
       name: feature.Name,
